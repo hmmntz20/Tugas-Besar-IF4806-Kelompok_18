@@ -9,9 +9,9 @@ void menuUser(List &L) {
         printLine('-');
         printCenter("MENU USER");
         printLine('-');
-        cout << "|  [1] Lihat Semua Data                                 |" << endl;
-        cout << "|  [2] Keputusan Sidang                                          |" << endl;
-        cout << "|  [3] Laporan Hakim Tersibuk                             |" << endl;
+        cout << "|  [1] Lihat Semua Data                                                |" << endl;
+        cout << "|  [2] Keputusan Sidang                                                |" << endl;
+        cout << "|  [3] Laporan Hakim Tersibuk                                          |" << endl;
         cout << "|  [0] Kembali ke Main Menu                                            |" << endl;
         printLine('-');
         cout << " >> Pilih menu: ";

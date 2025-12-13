@@ -12,17 +12,18 @@ void menuAdmin(List &L) {
         printLine('-');
         // cout << "|  [1] Tambah Hakim Baru                               |" << endl;
         cout << "| " << cell(" [1] Tambah Hakim Baru", 68) << " |" << endl;
-        cout << "|  [2] Hapus Hakim                  |" << endl;
-        cout << "|  [3] Registrasi Terdakwa Baru                        |" << endl;
-        cout << "|  [4] Hapus Data Terdakwa                             |" << endl;
-        cout << "|  [5] Lihat Semua Data                |" << endl;
-        cout << "|  [0] Kembali ke Main Menu                            |" << endl;
+        cout << "|  [2] Hapus Hakim                                        |" << endl;
+        cout << "|  [3] Registrasi Terdakwa Baru                           |" << endl;
+        cout << "|  [4] Hapus Data Terdakwa                                |" << endl;
+        cout << "|  [5] Lihat Semua Data                                   |" << endl;
+        cout << "|  [0] Kembali ke Main Menu                               |" << endl;
         printLine('-');
         cout << " >> Pilih menu: ";
         cin >> choice;
 
         switch(choice) {
             case 1:
+                clearScreen();
                 cout << "\n[+] Masukkan Nama Hakim : "; cin >> nHakim;
                 cout << "[+] Masukkan NIP Hakim  : "; cin >> nip;
                 insertHakim_103012400118(L, createElmHakim_103012400118(nHakim, nip));

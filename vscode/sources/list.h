@@ -41,8 +41,8 @@ struct List {
 void createList_103012400118(List &L);
 adrHakim createElmHakim_103012400118(string nama, string nip);
 adrTerdakwa createElmTerdakwa_103012400248(string nama, string kasus);
-void insertHakim_103012400118(List &L, adrHakim P);
-void deleteHakim_103012400118(List &L, string namaHakim);
+void insertHakim_103012400118(List &L, adrHakim P); //insertLast
+void deleteHakim_103012400118(List &L, string namaHakim); //
 adrHakim searchHakim_103012400248(List L, string nama);
 void insertTerdakwa_103012400248(List &L, string namaHakim, adrTerdakwa C);
 void deleteTerdakwa_103012400248(List &L, string namaHakim, string namaTerdakwa);
