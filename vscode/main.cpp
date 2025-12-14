@@ -7,9 +7,9 @@ int main() {
     List L;
     createList_103012400118(L);
 
-    insertHakim_103012400118(L, createElmHakim_103012400118("Dedy_Corbuzier", "H003"));
-    insertHakim_103012400118(L, createElmHakim_103012400118("Corbuzier_Dedy", "H003"));
-    insertTerdakwa_103012400248(L, "Dedy_Corbuzier", createElmTerdakwa_103012400248("Rina_Nose", "Pencurian"));
+    insertLastHakim(L, createElmHakim_103012400118("Dedy_Corbuzier"));
+    insertLastHakim(L, createElmHakim_103012400118("Corbuzier_Dedy"));
+    insertLastTerdakwa(L, 1, createElmTerdakwa_103012400248("Rina_Nose", "Pencurian"));
 
     int choice;
     do {
