@@ -7,20 +7,22 @@
 
 using namespace std;
 
+typedef struct elmHakim* adrHakim;
+typedef struct elmTerdakwa* adrTerdakwa;
+
 struct infoHakim {
     string nama;
     int jumlahKasusSelesai;
 };
 
 struct infoTerdakwa {
+    int id;
     string nama;
     string kasus;
     string status;
     int vonisTahun;
 };
 
-typedef struct elmHakim* adrHakim;
-typedef struct elmTerdakwa* adrTerdakwa;
 
 struct elmTerdakwa {
     infoTerdakwa info;
@@ -30,6 +32,7 @@ struct elmTerdakwa {
 struct elmHakim {
     infoHakim info;
     adrHakim next;
+    adrHakim prev;
     adrTerdakwa firstTerdakwa;
 };
 
@@ -39,29 +42,34 @@ struct List {
 
 void createList_103012400118(List &L);
 adrHakim createElmHakim_103012400118(string nama);
-adrTerdakwa createElmTerdakwa_103012400248(string nama, string kasus);
+adrTerdakwa createElmTerdakwa_103012400248(List L, string nama, string kasus);
 
-void insertFirstHakim(List &L, adrHakim P);
-void insertLastHakim(List &L, adrHakim P);
-void insertAfterHakim(List &L, int id, adrHakim P);
+void insertFirstHakim_103012400248(List &L, adrHakim P);
+void insertLastHakim_103012400118(List &L, adrHakim P);
+void insertAfterHakim_103012400248(List &L, int id, adrHakim P);
 
-void deleteFirstHakim(List &L);
-void deleteLastHakim(List &L);
-void deleteAfterHakim(List &L, int id);
+void deleteFirstHakim_103012400118(List &L);
+void deleteLastHakim_103012400248(List &L);
+void deleteAfterHakim_103012400118(List &L, int id);
+// TAMBAHIN DELETE UNTUK LANGSUNG MERUJUK KE ID TSB
 
-void insertFirstTerdakwa(List &L,  int idHakim, adrTerdakwa C);
-void insertLastTerdakwa(List &L, int idHakim, adrTerdakwa C);
-void insertAfterTerdakwa(List &L, int idHakim, int id, adrTerdakwa C);
+void insertFirstTerdakwa_103012400118(List &L,  int idHakim, adrTerdakwa C);
+void insertLastTerdakwa_103012400248(List &L, int idHakim, adrTerdakwa C);
+void insertAfterTerdakwa_103012400118(List &L, int idHakim, int id, adrTerdakwa C);
 
-void deleteFirstTerdakwa(List &L, int idHakim);
-void deleteLastTerdakwa(List &L, int idHakim);
-void deleteAfterTerdakwa(List &L, int idHakim, int id);
+void deleteFirstTerdakwa_103012400248(List &L, int idHakim);
+void deleteLastTerdakwa_103012400118(List &L, int idHakim);
+void deleteAfterTerdakwa_103012400248(List &L, int idHakim, int id);
+// TAMBAHIN DELETE UNTUK LANGSUNG MERUJUK KE ID TSB
 
-adrHakim searchHakim_103012400248(List L, int id);
+adrHakim searchHakim_103012400118(List L, int id);
+adrTerdakwa searchTerdakwa_103012400248(List L, int idTerdakwa);
+
 void showAllData_103012400118(List L);
-void showDataHakim(List L);
-void showDataTerdakwa(List L);
-void updateVonis_103012400248(List &L, string namaTerdakwa, int tahun);
+void showDataHakim_103012400248(List L);
+void showDataTerdakwa_103012400118(List L);
+void updateVonis_103012400248(List &L, int idTerdakwa, int tahun);
 void showHakimTersibuk_103012400118(List L);
+void showTerdakwaHukumanTerlama_103012400248(List L);
 
 #endif

@@ -9,13 +9,30 @@ adrHakim createElmHakim_103012400118(string nama) {
     adrHakim P = new elmHakim;
     P->info.nama = nama;
     P->next = nullptr;
+    P->prev = nullptr;
     P->firstTerdakwa = nullptr;
     P->info.jumlahKasusSelesai = 0;
     return P;
 }
 
-adrTerdakwa createElmTerdakwa_103012400248(string nama, string kasus) {
+int getNewTerdakwaId(List L) {
+    int maxId = 0;
+    adrHakim P = L.first;
+    while (P != nullptr) {
+        adrTerdakwa C = P->firstTerdakwa;
+        while (C != nullptr) {
+            if (C->info.id > maxId) {
+                maxId = C->info.id;
+            }
+            C = C->next;
+        }
+        P = P->next;
+    }
+    return maxId + 1;
+}
+adrTerdakwa createElmTerdakwa_103012400248(List L, string nama, string kasus) {
     adrTerdakwa P = new elmTerdakwa;
+    P->info.id = getNewTerdakwaId(L);
     P->info.nama = nama;
     P->info.kasus = kasus;
     P->info.status = "Sidang";
@@ -24,113 +41,120 @@ adrTerdakwa createElmTerdakwa_103012400248(string nama, string kasus) {
     return P;
 }
 
-void insertFirstHakim(List &L, adrHakim P) {
-    P->next = L.first;
-    L.first = P;
-}
-
-void insertLastHakim(List &L, adrHakim P) {
+void insertFirstHakim_103012400248(List &L, adrHakim P) {
     if (L.first == nullptr) {
         L.first = P;
+    } else {
+        P->next = L.first;
+        L.first->prev = P;
+        L.first = P;
+    }
+}
+
+void insertLastHakim_103012400118(List &L, adrHakim P) {
+    if (L.first == nullptr) {
+        insertFirstHakim_103012400248(L, P);
     } else {
         adrHakim Q = L.first;
         while (Q->next != nullptr) {
             Q = Q->next;
         }
         Q->next = P;
+        P->prev = Q;
     }
 }
 
-void insertAfterHakim(List &L, int id, adrHakim P) {
-    adrHakim Prec = L.first;
-    int i = 1;
-    while (Prec != nullptr && i < id) {
-        Prec = Prec->next;
-        i++;
-    }
+void insertAfterHakim_103012400248(List &L, int id, adrHakim P) {
+    adrHakim Prec = searchHakim_103012400118(L, id);
+
     if (Prec != nullptr) {
         P->next = Prec->next;
+        P->prev = Prec;
+        
+        if (Prec->next != nullptr) {
+            Prec->next->prev = P;
+        }
         Prec->next = P;
         cout << "[Sukses] Hakim ditambahkan setelah urutan ke-" << id << endl;
     } else {
-        cout << "[!] Urutan Hakim tidak valid (melebihi jumlah data)." << endl;
+        cout << "[!] Hakim referensi tidak ditemukan." << endl;
     }
 }
 
-void deleteChildrenOfHakim(adrHakim P) {
-    if (P == nullptr) return;
-    adrTerdakwa C = P->firstTerdakwa;
-    while (C != nullptr) {
-        adrTerdakwa temp = C;
-        C = C->next;
-        delete temp;
-    }
-    P->firstTerdakwa = nullptr;
-}
 
-void deleteFirstHakim(List &L) {
+
+void deleteFirstHakim_103012400118(List &L) {
     if (L.first == nullptr) {
-        cout << "[!] List Hakim Kosong." << endl;
+        cout << "[!] Data kosong." << endl;
+    } else {
+        adrHakim P = L.first;
+        if (P->next == nullptr) {
+            L.first = nullptr;
+        } else {
+            L.first = P->next;
+            L.first->prev = nullptr;
+            P->next = nullptr;
+        }
+        delete P;
+        cout << "[Sukses] Hakim pertama dihapus." << endl;
+    }
+}
+
+void deleteLastHakim_103012400248(List &L) {
+    if (L.first == nullptr) {
+        cout << "[!] Data kosong." << endl;
         return;
     }
+
     adrHakim P = L.first;
-    L.first = P->next;
-    deleteChildrenOfHakim(P);
-    delete P;
-    cout << "[Sukses] Hakim urutan pertama berhasil dihapus." << endl;
-}
-
-void deleteLastHakim(List &L) {
-    if (L.first == nullptr) {
-        cout << "[!] List Hakim Kosong." << endl;
+    if (P->next == nullptr) {
+        deleteFirstHakim_103012400118(L);
         return;
     }
-    if (L.first->next == nullptr) {
-        deleteFirstHakim(L);
-        return;
+
+    while (P->next != nullptr) {
+        P = P->next;
     }
-    adrHakim Q = L.first;
-    while (Q->next->next != nullptr) {
-        Q = Q->next;
-    }
-    adrHakim P = Q->next;
-    Q->next = nullptr;
-    deleteChildrenOfHakim(P);
+    P->prev->next = nullptr;
+    P->prev = nullptr;
+    
     delete P;
-    cout << "[Sukses] Hakim urutan terakhir berhasil dihapus." << endl;
+    cout << "[Sukses] Hakim terakhir dihapus." << endl;
 }
 
-void deleteAfterHakim(List &L, int id) {
-    adrHakim Prec = L.first;
-    int i = 1;
-    while (Prec != nullptr && i < id) {
-        Prec = Prec->next;
-        i++;
-    }
+void deleteAfterHakim_103012400118(List &L, int id) {
+    adrHakim Prec = searchHakim_103012400118(L, id);
+    
     if (Prec != nullptr && Prec->next != nullptr) {
         adrHakim P = Prec->next;
         Prec->next = P->next;
-        deleteChildrenOfHakim(P);
+        if (P->next != nullptr) {
+            P->next->prev = Prec;
+        }
+        
+        P->next = nullptr;
+        P->prev = nullptr;
         delete P;
-        cout << "[Sukses] Hakim setelah urutan ke-" << id << " berhasil dihapus." << endl;
+        cout << "[Sukses] Hakim setelah urutan ke-" << id << " dihapus." << endl;
     } else {
-        cout << "[!] Gagal. Urutan tidak ditemukan atau tidak ada elemen setelahnya." << endl;
+        cout << "[!] Gagal. Target tidak ditemukan atau list hanya satu elemen." << endl;
     }
 }
 
-void insertFirstTerdakwa(List &L, int idHakim, adrTerdakwa C) {
-    adrHakim P = searchHakim_103012400248(L, idHakim);
+void insertFirstTerdakwa_103012400118(List &L, int idHakim, adrTerdakwa C) {
+    adrHakim P = searchHakim_103012400118(L, idHakim);
     if (P != nullptr) {
         C->next = P->firstTerdakwa;
         P->firstTerdakwa = C;
-        cout << "[Sukses] Terdakwa ditambahkan di awal list hakim " << P->info.nama << endl;
+        P->info.jumlahKasusSelesai++;
+        cout << "[Sukses] Terdakwa (ID: " << C->info.id << ") ditambahkan di awal list hakim ." << endl;
     } else {
         cout << "[!] Hakim tidak ditemukan." << endl;
     }
 }
 
-void insertLastTerdakwa(List &L, int idHakim, adrTerdakwa C) {
-    adrHakim P = searchHakim_103012400248(L, idHakim);
+void insertLastTerdakwa_103012400248(List &L, int idHakim, adrTerdakwa C) {
+    adrHakim P = searchHakim_103012400118(L, idHakim);
     if (P != nullptr) {
         if (P->firstTerdakwa == nullptr) {
             P->firstTerdakwa = C;
@@ -141,54 +165,61 @@ void insertLastTerdakwa(List &L, int idHakim, adrTerdakwa C) {
             }
             Q->next = C;
         }
-        cout << "[Sukses] Terdakwa ditambahkan di akhir list hakim " << P->info.nama << endl;
+        P->info.jumlahKasusSelesai++;
+        cout << "[Sukses] Terdakwa (ID: " << C->info.id << ") ditambahkan di akhir list hakim." << endl;
     } else {
         cout << "[!] Hakim tidak ditemukan." << endl;
     }
 }
 
-void insertAfterTerdakwa(List &L, int idHakim, int id, adrTerdakwa C) {
-    adrHakim P = searchHakim_103012400248(L, id);
+void insertAfterTerdakwa_103012400118(List &L, int idHakim, int idTerdakwa, adrTerdakwa C) {
+    adrHakim P = searchHakim_103012400118(L, idTerdakwa);
     if (P == nullptr) {
         cout << "[!] Hakim tidak ditemukan." << endl;
         return;
     }
     adrTerdakwa Prec = P->firstTerdakwa;
     int i = 1;
-    while (Prec != nullptr && i < id) {
+    while (Prec != nullptr && Prec->info.id != idTerdakwa) {
         Prec = Prec->next;
-        i++;
     }
     if (Prec != nullptr) {
         C->next = Prec->next;
         Prec->next = C;
-        cout << "[Sukses] Terdakwa ditambahkan setelah urutan ke-" << id << endl;
+        P->info.jumlahKasusSelesai++;
+        cout << "[Sukses] Terdakwa (ID: " << C->info.id << ") ditambahkan setelah ID " << idTerdakwa << endl;
     } else {
         cout << "[!] Urutan Terdakwa tidak valid." << endl;
     }
 }
 
-void deleteFirstTerdakwa(List &L, int idHakim) {
-    adrHakim P = searchHakim_103012400248(L, idHakim);
+void deleteFirstTerdakwa_103012400248(List &L, int idHakim) {
+    adrHakim P = searchHakim_103012400118(L, idHakim);
     if (P == nullptr || P->firstTerdakwa == nullptr) {
         cout << "[!] Gagal. Hakim tidak ditemukan atau list terdakwa kosong." << endl;
         return;
     }
     adrTerdakwa C = P->firstTerdakwa;
     P->firstTerdakwa = C->next;
+    P->info.jumlahKasusSelesai--;
     delete C;
     cout << "[Sukses] Terdakwa pertama dihapus dari hakim " << P->info.nama << endl;
 }
 
-void deleteLastTerdakwa(List &L, int idHakim) {
-    adrHakim P = searchHakim_103012400248(L, idHakim);
+void deleteLastTerdakwa_103012400118(List &L, int idHakim) {
+    adrHakim P = searchHakim_103012400118(L, idHakim);
     if (P == nullptr || P->firstTerdakwa == nullptr) {
         cout << "[!] Gagal." << endl;
         return;
     }
+
+    P->info.jumlahKasusSelesai--;
     
     if (P->firstTerdakwa->next == nullptr) {
-        deleteFirstTerdakwa(L, idHakim);
+        adrTerdakwa C = P->firstTerdakwa;
+        P->firstTerdakwa = nullptr;
+        delete C;
+        cout << "[Sukses] Terdakwa terakhir dihapus." << endl;
         return;
     }
 
@@ -202,29 +233,29 @@ void deleteLastTerdakwa(List &L, int idHakim) {
     cout << "[Sukses] Terdakwa terakhir dihapus dari hakim " << P->info.nama << endl;
 }
 
-void deleteAfterTerdakwa(List &L, int idHakim, int id) {
-    adrHakim P = searchHakim_103012400248(L, idHakim);
+void deleteAfterTerdakwa_103012400248(List &L, int idHakim, int idTerdakwa) {
+    adrHakim P = searchHakim_103012400118(L, idHakim);
     if (P == nullptr) {
         cout << "[!] Hakim tidak ditemukan." << endl;
         return;
     }
     adrTerdakwa Prec = P->firstTerdakwa;
     int i = 1;
-    while (Prec != nullptr && i < id) {
+    while (Prec != nullptr && Prec->info.id != idTerdakwa) {
         Prec = Prec->next;
-        i++;
     }
     if (Prec != nullptr && Prec->next != nullptr) {
         adrTerdakwa C = Prec->next;
         Prec->next = C->next;
+        P->info.jumlahKasusSelesai--;
         delete C;
-        cout << "[Sukses] Terdakwa setelah urutan ke-" << id << " dihapus." << endl;
+        cout << "[Sukses] Terdakwa setelah ID " << idTerdakwa << " dihapus." << endl;
     } else {
         cout << "[!] Gagal. Urutan tidak ketemu atau ini elemen terakhir." << endl;
     }
 }
 
-adrHakim searchHakim_103012400248(List L, int id) {
+adrHakim searchHakim_103012400118(List L, int id) {
     adrHakim P = L.first;
     int i = 1;
     while (P != nullptr && i < id) {
@@ -237,165 +268,144 @@ adrHakim searchHakim_103012400248(List L, int id) {
     return nullptr;
 }
 
-void showAllData_103012400118(List L) {
-    clearScreen();
-    headerTitle("DASHBOARD MONITORING PERSIDANGAN");
-    cout << endl;
+adrTerdakwa searchTerdakwa_103012400248(List L, int idTerdakwa) {
+    adrHakim P = L.first;
+    while (P != nullptr) {
+        adrTerdakwa C = P->firstTerdakwa;
+        while (C != nullptr) {
+            if (C->info.id == idTerdakwa) {
+                return C;
+            }
+            C = C->next;
+        }
+        P = P->next;
+    }
+    return nullptr;
+}
 
+void showAllData_103012400118(List L) {
+    cout << endl;
     if (L.first == nullptr) {
-        cout << "|                          DATA MASIH KOSONG                           |" << endl;
-        cout << "+======================================================================+" << endl;
+        cout << "[!] Data Kosong." << endl;
         return;
     }
 
-    cout << "+====+=========================================================+=======+" << endl;
-    cout << "| Id | " << cell("NAMA HAKIM", 53) << " | " << cell("KASUS", 5) << " |" << endl;
-    cout << "+====+=========================================================+=======+" << endl;
+    vector<int> wHakim = {2, 53, 15}; vector<int> wTerdakwa = {2, 30, 15, 15}; vector<int> wEmpty = {71};
+    printBorder(wHakim); printRow({"ID", "NAMA HAKIM", "KASUS"}, wHakim); printBorder(wHakim);
 
     adrHakim P = L.first;
     int i = 1;
 
     while (P != nullptr) {
-        cout << "| " << cell(to_string(i), 2) << " | " 
-             << cell(P->info.nama, 53) << " | "
-             << cell(to_string(P->info.jumlahKasusSelesai), 5) << " |" << endl;
+        printRow({
+            to_string(i), 
+            P->info.nama, 
+            to_string(P->info.jumlahKasusSelesai)
+        }, wHakim);
+
+        string indent = "|   "; printBorder(wTerdakwa, indent + " "); printRow({"ID", "NAMA TERDAKWA", "JENIS KASUS", "STATUS"}, wTerdakwa, indent + " "); printBorder(wTerdakwa, indent + " ");
         
-        cout << "|    +---------------------------+-------------------+-----------------+" << endl;
-
         adrTerdakwa C = P->firstTerdakwa;
-
         if (C == nullptr) {
-            cout << "|    | " << center("BELUM ADA KASUS YANG DITANGANI", 59) << " |" << endl;
+            printRow({
+                center("[!] Belum Ada Kasus", wEmpty[0])
+            }, wEmpty, indent + " ");
         } else {
-            cout << "|    | Id | " << cell("NAMA TERDAKWA", 23) 
-                 << " | " << cell("JENIS KASUS", 15) 
-                 << " | " << cell("STATUS", 13) << " |" << endl;
-            
-            cout << "|    +----+-------------------------+-----------------+-----------------+" << endl;
-
-            int j = 1;
             while (C != nullptr) {
-                string statusStr = C->info.status;
-                if (C->info.status == "Vonis") {
-                    statusStr += " (" + to_string(C->info.vonisTahun) + " Thn)";
-                }
-
-                cout << "|    | " << cell(to_string(j), 2) << " | "
-                     << cell(C->info.nama, 23) << " | "
-                     << cell(C->info.kasus, 15) << " | "
-                     << cell(statusStr, 13) << " |" << endl;
+                string statusStr = (C->info.status == "Vonis") ? "Vonis" : "Sidang";
+                
+                printRow({
+                    to_string(C->info.id), 
+                    C->info.nama, 
+                    C->info.kasus, 
+                    statusStr
+                }, wTerdakwa, indent + " ");
 
                 C = C->next;
-                j++;
             }
         }
-        cout << "+====+=========================================================+=======+" << endl;
+
+        printBorder(wEmpty, indent + " "); printBorder(wHakim);
         
         P = P->next;
         i++;
     }
 }
 
-void showDataHakim(List L) {
+void showDataHakim_103012400248(List L) {
     clearScreen();
-    headerTitle("DATA HAKIM TERDAFTAR");
+    headerTitle("DATA HAKIM");
     cout << endl;
 
     if (L.first == nullptr) {
-        cout << "|                          DATA MASIH KOSONG                           |" << endl;
-        cout << "+======================================================================+" << endl;
+        cout << "[!] Data Kosong." << endl;
         return;
     }
 
-    cout << "+====+======================================================+==========+" << endl;
-    cout << "| ID | " << cell("NAMA HAKIM", 50) << " | " 
-         << cell("PERFORMA", 8) << " |" << endl;
-    cout << "+====+======================================================+==========+" << endl;
+    vector<int> widths = {2, 53, 15};
+    printBorder(widths);
+    printRow({"NO", "NAMA HAKIM", "TOTAL"}, widths);
+    printBorder(widths);
 
     adrHakim P = L.first;
     int i = 1;
     while (P != nullptr) {
-        cout << "| " << cell(to_string(i), 2) << " | " 
-             << cell(P->info.nama, 50) << " | "
-             << cell(to_string(P->info.jumlahKasusSelesai), 8) << " |" << endl;
+        printRow({to_string(i), P->info.nama, to_string(P->info.jumlahKasusSelesai)}, widths);
         P = P->next;
         i++;
     }
-    cout << "+====+======================================================+==========+" << endl;
+    printBorder(widths);
 }
 
-void showDataTerdakwa(List L) {
+void showDataTerdakwa_103012400118(List L) {
     clearScreen();
-    headerTitle("DAFTAR SELURUH TERDAKWA");
+    headerTitle("DATA TERDAKWA");
     cout << endl;
 
     bool isEmpty = true;
     adrHakim P = L.first;
-    while(P != nullptr){
-        if(P->firstTerdakwa != nullptr) isEmpty = false;
-        P = P->next;
-    }
+    while(P != nullptr){ if(P->firstTerdakwa) isEmpty = false; P=P->next; }
 
-    if (isEmpty) {
-        cout << "|                     BELUM ADA DATA TERDAKWA                          |" << endl;
-        cout << "+======================================================================+" << endl;
-        return;
-    }
+    if (isEmpty) { cout << "[!] Data Kosong." << endl; return; }
 
-    cout << "+====+=============================+====================+==============+" << endl;
-    cout << "| ID | " << cell("NAMA TERDAKWA", 27) << " | " 
-         << cell("KASUS", 18) << " | " 
-         << cell("STATUS", 12) << " |" << endl;
-    cout << "+====+=============================+====================+==============+" << endl;
+    vector<int> widths = {2, 35, 15, 15};
+    printBorder(widths);
+    printRow({"ID", "NAMA TERDAKWA", "KASUS", "STATUS"}, widths);
+    printBorder(widths);
 
     P = L.first;
-    int i = 1;
-    
     while (P != nullptr) {
         adrTerdakwa C = P->firstTerdakwa;
         while (C != nullptr) {
             string stat = (C->info.status == "Vonis") ? "Vonis" : "Sidang";
-            
-            cout << "| " << cell(to_string(i), 2) << " | " 
-                 << cell(C->info.nama, 27) << " | " 
-                 << cell(C->info.kasus, 18) << " | "
-                 << cell(stat, 12) << " |" << endl;
-            
+            printRow({to_string(C->info.id), C->info.nama, C->info.kasus, stat}, widths);
             C = C->next;
-            i++;
         }
         P = P->next;
     }
-    cout << "+====+=============================+====================+==============+" << endl;
+    printBorder(widths);
 }
 
-void updateVonis_103012400248(List &L, string namaTerdakwa, int tahun) {
-    adrHakim P = L.first;
-    bool found = false;
-
-    while (P != nullptr && !found) {
-        adrTerdakwa C = P->firstTerdakwa;
-        while (C != nullptr) {
-            if (C->info.nama == namaTerdakwa) {
-                if (C->info.status != "Vonis") { 
-                    P->info.jumlahKasusSelesai++;
-                }
-                
-                C->info.status = "Vonis";
-                C->info.vonisTahun = tahun;
-                cout << "[Sukses] Vonis updated. Performa Hakim " << P->info.nama << " +1." << endl;
-                found = true;
-                break;
-            }
-            C = C->next;
-        }
-        P = P->next;
+void updateVonis_103012400248(List &L, int idTerdakwa, int tahun) {
+    adrTerdakwa C = searchTerdakwa_103012400248(L, idTerdakwa);
+    if (C != nullptr) {
+        C->info.status = "Vonis";
+        C->info.vonisTahun = tahun;
+        cout << "[Sukses] Status updated menjadi Vonis (" << tahun << " Tahun)." << endl;
+    } else {
+        cout << "[Error] Terdakwa dengan ID " << idTerdakwa << " tidak ditemukan." << endl;
     }
-    if (!found) cout << "[Error] Terdakwa tidak ditemukan." << endl;
 }
 
 void showHakimTersibuk_103012400118(List L) {
-    if (L.first == nullptr) return;
+    clearScreen();
+    headerTitle("DASHBOARD HAKIM TERSIBUK");
+    cout << endl;
+
+    if (L.first == nullptr) {
+        cout << "[!] Data Kosong." << endl;
+        return;
+    }
 
     adrHakim P = L.first;
     adrHakim champion = P;
@@ -407,10 +417,54 @@ void showHakimTersibuk_103012400118(List L) {
         P = P->next;
     }
 
-    headerTitle("HAKIM TERSIBUK");
-    cout << "| " << " [-] Nama        :  "<< cell(champion->info.nama, 48) << " |" << endl;
-    cout << "| " << " [-] Total Kasus :  "<< cell(to_string(champion->info.jumlahKasusSelesai), 48) << " |" << endl;
-    printLine('=');
-    // cout << "Nama  : " << champion->info.nama << endl;
-    // cout << "Total : " << champion->info.jumlahKasusSelesai << " Kasus" << endl;
+    vector<int> wDash = {20, 53};
+    printBorder(wDash);
+    printRow({"Kategori", "Detail Informasi"}, wDash);
+    printBorder(wDash);
+    printRow({"Nama Hakim", champion->info.nama}, wDash);
+    printRow({"Total Kasus", to_string(champion->info.jumlahKasusSelesai) + " Kasus"}, wDash);
+    printBorder(wDash);
+}
+
+void showTerdakwaHukumanTerlama_103012400248(List L) {
+    clearScreen();
+    headerTitle("TERDAKWA HUKUMAN TERBERAT");
+    cout << endl;
+
+    if (L.first == nullptr) {
+        cout << "[!] Data Kosong." << endl;
+        return;
+    }
+
+    adrHakim P = L.first;
+    adrTerdakwa maxC = nullptr;
+    adrHakim hakimPemberiVonis = nullptr;
+    int maxVonis = -1;
+
+    while (P != nullptr) {
+        adrTerdakwa C = P->firstTerdakwa;
+        while (C != nullptr) {
+            if (C->info.status == "Vonis" && C->info.vonisTahun > maxVonis) {
+                maxVonis = C->info.vonisTahun;
+                maxC = C;
+                hakimPemberiVonis = P;
+            }
+            C = C->next;
+        }
+        P = P->next;
+    }
+
+    if (maxC != nullptr) {
+        vector<int> wDash = {20, 40};
+        printBorder(wDash);
+        printRow({"Kategori", "Detail Informasi"}, wDash);
+        printBorder(wDash);
+        printRow({"Nama Terdakwa", maxC->info.nama}, wDash);
+        printRow({"Kasus", maxC->info.kasus}, wDash);
+        printRow({"Lama Vonis", to_string(maxC->info.vonisTahun) + " Tahun"}, wDash);
+        printRow({"Divonis Oleh", hakimPemberiVonis->info.nama}, wDash);
+        printBorder(wDash);
+    } else {
+        cout << "[!] Belum ada terdakwa yang mendapatkan vonis." << endl;
+    }
 }

@@ -3,94 +3,80 @@
 void menuAdmin(List &L) {
     int choice, subChoice, idHakim, idTerdakwa;
     string nHakim, nTerdakwa, kasus;
-    char confirm;
-
+    
     do {
-        clearScreen();
-        printLine('-');
-        printCenter("MENU ADMIN");
-        printLine('-');
-        // cout << "|  [1] Tambah Hakim Baru                               |" << endl;
-        cout << "| " << cell(" [1] Tambah Hakim", 68) << " |" << endl;
-        cout << "|  [2] Hapus Hakim                                        |" << endl;
-        cout << "|  [3] Tambah Terdakwa                                             |" << endl;
-        cout << "|  [4] Hapus Data Terdakwa                                |" << endl;
-        cout << "|  [5] Lihat Data                                         |" << endl;
-        cout << "|  [0] Logout                                             |" << endl;
-        printLine('-');
+        printMenu("MENU ADMIN", {
+            "[1] Tambah Hakim Baru",
+            "[2] Hapus Data Hakim",
+            "[3] Tambah Terdakwa Baru",
+            "[4] Hapus Data Terdakwa",
+            "[5] Lihat Data",
+            "[0] Logout"
+        });
+
         cout << " >> Pilih menu: ";
         cin >> choice;
 
         switch(choice) {
             case 1:
-                clearScreen();
-                headerTitle("TAMBAH HAKIM BARU");
-                cout << "\nPilih metode insert:" << endl;
-                cout << "[1] Insert First" << endl;
-                cout << "[2] Insert Last" << endl;
-                cout << "[3] Insert After" << endl;
+                printMenu("TAMBAH HAKIM BARU", {
+                    "[1] Insert First",
+                    "[2] Insert Last",
+                    "[3] Insert After"
+                }, 50);
                 cout << ">> Pilihan: "; cin >> subChoice;
 
                 if (subChoice == 1) {
                     cout << "\n[+] Masukkan Nama Hakim Baru : "; cin >> nHakim;
-                    adrHakim P = createElmHakim_103012400118(nHakim);
-                    insertFirstHakim(L, P);
+                    insertFirstHakim_103012400248(L, createElmHakim_103012400118(nHakim));
                 } else if (subChoice == 2) {
                     cout << "\n[+] Masukkan Nama Hakim Baru : "; cin >> nHakim;
-                    adrHakim P = createElmHakim_103012400118(nHakim);
-                    insertLastHakim(L, P);
+                    insertLastHakim_103012400118(L, createElmHakim_103012400118(nHakim));
                 } else if (subChoice == 3) {
-                    showDataHakim(L);
+                    showDataHakim_103012400248(L);
                     cout << "\n[+] Masukkan Nama Hakim Baru : "; cin >> nHakim;
-                    cout << "Insert setelah Hakim ke-: "; cin >> idHakim;
-                    adrHakim P = createElmHakim_103012400118(nHakim);
-                    insertAfterHakim(L, idHakim, P);
-                } else {
-                    cout << "[!] Metode tidak valid. Batal." << endl;
+                    cout << "Insert setelah Hakim urutan ke-: "; cin >> idHakim;
+                    insertAfterHakim_103012400248(L, idHakim, createElmHakim_103012400118(nHakim));
                 }
                 break;
 
             case 2:
-                clearScreen();
-                headerTitle("HAPUS DATA HAKIM");
-                cout << "Pilih metode delete:" << endl;
-                cout << "[1] Delete First" << endl;
-                cout << "[2] Delete Last" << endl;
-                cout << "[3] Delete After" << endl;
+                printMenu("HAPUS DATA HAKIM", {
+                    "[1] Delete First",
+                    "[2] Delete Last",
+                    "[3] Delete After"
+                }, 50);
                 cout << ">> Pilihan: "; cin >> subChoice;
 
-                if (subChoice == 1) {
-                    deleteFirstHakim(L);
-                } else if (subChoice == 2) {
-                    deleteLastHakim(L);
-                } else if (subChoice == 3) {
-                    showDataHakim(L);
+                if (subChoice == 1) deleteFirstHakim_103012400118(L);
+                else if (subChoice == 2) deleteLastHakim_103012400248(L);
+                else if (subChoice == 3) {
+                    showDataHakim_103012400248(L);
                     cout << "Hapus Hakim setelah urutan ke-: "; cin >> idHakim;
-                    deleteAfterHakim(L, idHakim);
-                } else {
-                        cout << "[!] Metode tidak valid. Batal." << endl;
+                    deleteAfterHakim_103012400118(L, idHakim);
                 }
                 break;
 
             case 3:
-                showDataHakim(L);
+                showDataHakim_103012400248(L);
                 cout << "\n[+] Masukkan ID Hakim Penanggung Jawab : "; cin >> idHakim;
-                if (searchHakim_103012400248(L, idHakim) != nullptr) {
-                    cout << "Pilih metode insert Terdakwa:" << endl;
-                    cout << "[1] Insert First" << endl;
-                    cout << "[2] Insert Last" << endl;
-                    cout << "[3] Insert After" << endl;
+                if (searchHakim_103012400118(L, idHakim) != nullptr) {
+                    printMenu("METODE INSERT TERDAKWA", {
+                        "[1] Insert First",
+                        "[2] Insert Last",
+                        "[3] Insert After"
+                    }, 50);
                     cout << ">> Pilihan: "; cin >> subChoice;
 
                     cout << "\n[+] Nama Terdakwa : "; cin >> nTerdakwa;
                     cout << "[+] Jenis Kasus   : "; cin >> kasus;
-                    adrTerdakwa C = createElmTerdakwa_103012400248(nTerdakwa, kasus);
+                    adrTerdakwa C = createElmTerdakwa_103012400248(L, nTerdakwa, kasus);
 
-                    if (subChoice == 1) insertFirstTerdakwa(L, idHakim, C);
-                    else if (subChoice == 2) insertLastTerdakwa(L, idHakim, C);
+                    if (subChoice == 1) insertFirstTerdakwa_103012400118(L, idHakim, C);
+                    else if (subChoice == 2) insertLastTerdakwa_103012400248(L, idHakim, C);
                     else if (subChoice == 3) {
-                        cout << "Insert setelah Terdakwa ke-: "; cin >> idTerdakwa;
-                        insertAfterTerdakwa(L, idHakim, idTerdakwa, C);
+                        cout << "Insert setelah Terdakwa ID : "; cin >> idTerdakwa;
+                        insertAfterTerdakwa_103012400118(L, idHakim, idTerdakwa, C);
                     }
                 } else {
                     cout << "[!] Hakim tidak ditemukan!" << endl;
@@ -98,20 +84,21 @@ void menuAdmin(List &L) {
                 break;
 
             case 4:
-                showDataHakim(L);
-                cout << "\n[-] Masukkan Nama Hakim : "; cin >> idHakim;
-                if (searchHakim_103012400248(L, idHakim) != nullptr) {
-                    cout << "Pilih metode delete Terdakwa:" << endl;
-                    cout << "[1] Delete First" << endl;
-                    cout << "[2] Delete Last" << endl;
-                    cout << "[3] Delete After" << endl;
+                showDataHakim_103012400248(L);
+                cout << "\n[-] Masukkan ID Hakim : "; cin >> idHakim;
+                if (searchHakim_103012400118(L, idHakim) != nullptr) {
+                    printMenu("METODE DELETE TERDAKWA", {
+                        "[1] Delete First",
+                        "[2] Delete Last",
+                        "[3] Delete After"
+                    }, 50);
                     cout << ">> Pilihan: "; cin >> subChoice;
 
-                    if (subChoice == 1) deleteFirstTerdakwa(L, idHakim);
-                    else if (subChoice == 2) deleteLastTerdakwa(L, idHakim);
+                    if (subChoice == 1) deleteFirstTerdakwa_103012400248(L, idHakim);
+                    else if (subChoice == 2) deleteLastTerdakwa_103012400118(L, idHakim);
                     else if (subChoice == 3) {
-                        cout << "Hapus Terdakwa ke-: "; cin >> idTerdakwa;
-                        deleteAfterTerdakwa(L, idHakim, idTerdakwa);
+                        cout << "Hapus Terdakwa ID: "; cin >> idTerdakwa;
+                        deleteAfterTerdakwa_103012400248(L, idHakim, idTerdakwa);
                     }
                 } else {
                     cout << "[!] Hakim tidak ditemukan!" << endl;
@@ -119,26 +106,23 @@ void menuAdmin(List &L) {
                 break;
 
             case 5:
-                clearScreen();
-                printLine('-');
-                printCenter("PILIH TAMPILAN DATA");
-                printLine('-');
-                cout << "|  [1] Data Hakim                                                      |" << endl;
-                cout << "|  [2] Data Terdakwa                                                   |" << endl;
-                cout << "|  [3] Semua Data                                                      |" << endl;
-                printLine('-');
-                cout << " >> Pilih tampilan: ";
-                cin >> subChoice;
-                if (subChoice == 1) {
-                    showDataHakim(L);
-                } else if (subChoice == 2) {
-                    showDataTerdakwa(L);
-                } else {
+                printMenu("PILIH TAMPILAN DATA", {
+                    "[1] Data Hakim",
+                    "[2] Data Terdakwa",
+                    "[3] Semua Data (Detail)"
+                }, 50);
+                
+                cout << " >> Pilih tampilan: "; cin >> subChoice;
+                if (subChoice == 1) showDataHakim_103012400248(L);
+                else if (subChoice == 2) showDataTerdakwa_103012400118(L);
+                else {
+                    clearScreen();
+                    headerTitle("DASHBOARD SEMUA DATA");
                     showAllData_103012400118(L);
                 }
                 cout << "\nTekan Enter kembali..."; cin.ignore(); cin.get();
                 break;
-                
+
             case 0:
                 cout << "Kembali ke menu utama..." << endl;
                 break;

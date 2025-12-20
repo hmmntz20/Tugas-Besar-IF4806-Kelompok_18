@@ -1,20 +1,23 @@
-#ifndef WIDGETS_H
-#define WIDGETS_H
+#ifndef WIDGETS_H_INCLUDED
+#define WIDGETS_H_INCLUDED
 
 #include <iostream>
 #include <string>
-#include <cstdlib>
+#include <vector>
+#include <iomanip>
 
 using namespace std;
 
-const int UI_WIDTH = 72;
+string center(string content, int width);
 
-void clearScreen();
-string cell(string teks, int lebar);
-string center(string teks, int lebar);
-void garis();
-void printLine(char k);
+void printBorder(vector<int> widths, string prefix = "");
+void printRow(vector<string> cols, vector<int> widths, string prefix = "");
+
+void printMenu(string title, vector<string> options, int width = 75);
+
 void headerTitle(string title);
-void printCenter(string teks);
+void clearScreen();
+void printCenter(string content);
+void printLine(char c);
 
 #endif
